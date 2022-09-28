@@ -29,7 +29,7 @@
                     android:orientation="vertical"
                     android:padding="10dp">
                     <com.google.android.material.textfield.TextInputLayout
-                        app:boxStrokeColor="#2196F3"
+                        app:boxStrokeColor="@color/ColorPrimaryLight"
                         android:hint="Username"
                         app:hintTextColor="@color/black"
                         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                             android:textColor="@color/black"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
-                        app:boxStrokeColor="#2196F3"
+                        app:boxStrokeColor="@color/ColorPrimaryLight"
                         android:hint="Password"
                         app:hintTextColor="@color/black"
                         android:layout_width="match_parent"
