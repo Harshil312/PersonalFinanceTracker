@@ -72,7 +72,7 @@
                         android:id="@+id/btnLogin"
                         android:text="Login"
                         android:textSize="22sp"
-                        android:layout_margin="10dp"
+                        android:layout_margin="10dp"/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
