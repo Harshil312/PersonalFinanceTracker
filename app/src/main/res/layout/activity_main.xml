@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ColorSecondary"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <TextView
@@ -20,7 +20,7 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/splashAnimation"
-        android:layout_width="500dp"
+        android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_centerInParent="true"
         app:lottie_autoPlay="true"
