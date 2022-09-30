@@ -11,6 +11,7 @@
         android:theme="@style/Theme.PersonalFinanceTracking">
         <activity
             android:name=".LoginActivity"
+            android:launchMode="singleTop"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
