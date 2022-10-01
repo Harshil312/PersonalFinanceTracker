@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
     tools:context=".LoginActivity">
 
 
@@ -30,7 +31,7 @@
                     android:padding="10dp">
                     <com.google.android.material.textfield.TextInputLayout
                         app:boxStrokeColor="@color/ColorPrimaryLight"
-                        android:hint="Username"
+                        android:hint="Email"
                         app:hintTextColor="@color/black"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -39,8 +40,8 @@
                         app:startIconTint="@color/black"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                         <com.google.android.material.textfield.TextInputEditText
-                            android:inputType="text"
-                            android:id="@+id/UsernameET_Login"
+                            android:inputType="textEmailAddress"
+                            android:id="@+id/EmailET_Login"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:textSize="16sp"
@@ -75,6 +76,14 @@
                         android:text="Login"
                         android:textSize="22sp"
                         android:layout_margin="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/TextView_Login"
+                        android:textColor="@color/ColorPrimary"
+                        android:text="Not Yet Registered? Sign-Up!"
+                        android:layout_gravity="center"/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
