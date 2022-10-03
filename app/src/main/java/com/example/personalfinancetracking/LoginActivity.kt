@@ -6,23 +6,23 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import com.example.personalfinancetracking.databinding.ActivityLoginBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
+    lateinit var binding:ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        binding.TextViewLogin.setOnClickListener {
-            var intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+        binding.btnLinkLogin.setOnClickListener {
+            startActivity(Intent(this,RegisterActivity::class.java))
+            finish()
         }
 
         binding.btnLogin.setOnClickListener {
@@ -34,10 +34,10 @@ class LoginActivity : AppCompatActivity() {
 
                 firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val intent = Intent(this, HomeActivity::class.java)
-                        startActivity(intent)
+                        startActivity(Intent(this,HomeActivity::class.java))
+                        finish()
                     } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Username or Password Incorrect!", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -47,13 +47,5 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (firebaseAuth.currentUser != null){
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
     }
 }

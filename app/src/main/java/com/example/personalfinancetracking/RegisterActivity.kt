@@ -5,24 +5,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import com.example.personalfinancetracking.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityRegisterBinding
+    lateinit var binding:ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_register)
 
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        binding.TextViewRegister.setOnClickListener {
-            var intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        binding.btnLinkRegister.setOnClickListener {
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
         }
 
         binding.btnRegister.setOnClickListener {
@@ -34,10 +34,11 @@ class RegisterActivity : AppCompatActivity() {
                 if (pass == confirmPass) {
                     firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            val intent = Intent(this, LoginActivity::class.java)
-                            startActivity(intent)
+                            Toast.makeText(this, "Registered Successfully!", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this,HomeActivity::class.java))
+                            finish()
                         } else {
-                            Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Username or Password Incorrect!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 } else {

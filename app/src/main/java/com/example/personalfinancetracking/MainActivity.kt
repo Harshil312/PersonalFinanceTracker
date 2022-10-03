@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             startActivity(Intent(this,LoginActivity::class.java))
+            finish()
         },3000)
 
     }
