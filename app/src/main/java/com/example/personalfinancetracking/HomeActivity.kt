@@ -18,11 +18,11 @@ class HomeActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_home)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        binding.btnLogout.setOnClickListener {
-
-            firebaseAuth.signOut()
-            startActivity(Intent(this,LoginActivity::class.java))
-            finish()
-        }
+//        binding.btnLogout.setOnClickListener {
+//
+//            firebaseAuth.signOut()
+//            startActivity(Intent(this,LoginActivity::class.java))
+//            finish()
+//        }
     }
 }
