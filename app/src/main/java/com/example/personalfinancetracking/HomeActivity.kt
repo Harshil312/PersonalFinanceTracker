@@ -21,9 +21,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_home)
-
         firebaseAuth = FirebaseAuth.getInstance()
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.NavHostFragment) as NavHostFragment
 
         navController = navHostFragment.navController
