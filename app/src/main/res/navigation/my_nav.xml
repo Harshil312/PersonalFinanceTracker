@@ -10,4 +10,14 @@
         android:name="com.example.personalfinancetracking.fragment.IncomeFragment"
         android:label="fragment_income"
         tools:layout="@layout/fragment_income" />
+    <fragment
+        android:id="@+id/analyticFragment"
+        android:name="com.example.personalfinancetracking.fragment.AnalyticFragment"
+        android:label="fragment_analytic"
+        tools:layout="@layout/fragment_analytic" />
+    <fragment
+        android:id="@+id/expenseFragment"
+        android:name="com.example.personalfinancetracking.fragment.ExpenseFragment"
+        android:label="fragment_expense"
+        tools:layout="@layout/fragment_expense" />
 </navigation>
