@@ -2,4 +2,11 @@
     <string name="app_name">PersonalFinanceTracking</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <array name="incomeItem">
+        <item>Salary</item>
+        <item>Saving</item>
+        <item>Investment Return</item>
+        <item>Other</item>
+    </array>
 </resources>
