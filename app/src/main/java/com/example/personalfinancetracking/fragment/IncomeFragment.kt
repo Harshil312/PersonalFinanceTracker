@@ -3,30 +3,32 @@ package com.example.personalfinancetracking.fragment
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.personalfinancetracking.R
+import com.example.personalfinancetracking.adapter.MyAdapter
 import com.example.personalfinancetracking.databinding.FragmentIncomeBinding
 import com.example.personalfinancetracking.model.Details
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class IncomeFragment : Fragment() {
     lateinit var binding: FragmentIncomeBinding
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var DBRefer: DatabaseReference
+    lateinit var adapter: MyAdapter
     val TAG = "IncomeFragment"
 
     override fun onCreateView(
@@ -37,6 +39,7 @@ class IncomeFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_income, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
 
+            binding.rcViewIncomeFragment.layoutManager = LinearLayoutManager(requireContext())
         DBRefer = FirebaseDatabase.getInstance().getReference().child("Income")
             .child(firebaseAuth.currentUser!!.uid)
         binding.fabIncomeFragment.setOnClickListener {
@@ -88,10 +91,9 @@ class IncomeFragment : Fragment() {
 
                     val details = Details(item, amount, "", note, date, month)
                     DBRefer.child(id.toString()).setValue(details).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
-                                .show()
-                        } else {
+                        if (!it.isSuccessful) {
+//                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
+//                                .show()
                             Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
                                 .show()
                         }
@@ -112,4 +114,27 @@ class IncomeFragment : Fragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        try {
+            val recyclerOptions = FirebaseRecyclerOptions.Builder<Details>()
+                .setQuery(DBRefer, Details::class.java)
+                .build()
+            adapter = MyAdapter(recyclerOptions)
+            binding.rcViewIncomeFragment.adapter = adapter
+            adapter.startListening()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "onStart: " + e.message)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            adapter.stopListening()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

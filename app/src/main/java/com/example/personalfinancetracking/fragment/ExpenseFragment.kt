@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.personalfinancetracking.R
+import com.example.personalfinancetracking.adapter.MyAdapter
 import com.example.personalfinancetracking.databinding.FragmentExpenseBinding
 import com.example.personalfinancetracking.databinding.FragmentIncomeBinding
 import com.example.personalfinancetracking.model.Details
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -25,6 +28,7 @@ class ExpenseFragment : Fragment() {
     lateinit var binding: FragmentExpenseBinding
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var DBRefer: DatabaseReference
+    lateinit var adapter: MyAdapter
     val TAG = "ExpenseFragment"
 
 
@@ -36,13 +40,15 @@ class ExpenseFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_expense, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
 
+        binding.rcViewExpenseFragment.layoutManager = LinearLayoutManager(requireContext())
         DBRefer = FirebaseDatabase.getInstance().getReference().child("Expense")
-            .child(firebaseAuth.currentUser!!.uid)
+            .child(firebaseAuth.currentUser!!.uid);
         binding.fabExpenseFragment.setOnClickListener {
             callCustomDialog()
         }
         return binding.root
     }
+
     private fun callCustomDialog() {
         val dialog = AlertDialog.Builder(requireContext())
         val inflater = LayoutInflater.from(requireContext())
@@ -54,7 +60,17 @@ class ExpenseFragment : Fragment() {
         alertDialog.setCancelable(false)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item)
-        val ExpenseArray: Array<String> = arrayOf("Grocery", "Shopping", "Investment", "Bill Payments","Fee Payments","Insurance","Rent","Food Expense","Other")
+        val ExpenseArray: Array<String> = arrayOf(
+            "Grocery",
+            "Shopping",
+            "Investment",
+            "Bill Payments",
+            "Fee Payments",
+            "Insurance",
+            "Rent",
+            "Food Expense",
+            "Other"
+        )
         val arrayAdapter = ArrayAdapter<String>(
             requireContext(),
             androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
@@ -86,12 +102,11 @@ class ExpenseFragment : Fragment() {
 
                     val details = Details(item, "", Expense, note, date, month)
                     DBRefer.child(id.toString()).setValue(details).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
-                                .show()
-                        } else {
+                        if (!it.isSuccessful) {
+
                             Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
                                 .show()
+
                         }
                     }
                     alertDialog.dismiss()
@@ -108,6 +123,31 @@ class ExpenseFragment : Fragment() {
         alertDialog.show()
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        try {
+            val recyclerOptions = FirebaseRecyclerOptions.Builder<Details>()
+                .setQuery(DBRefer, Details::class.java)
+                .build()
+            adapter = MyAdapter(recyclerOptions)
+
+            binding.rcViewExpenseFragment.adapter = adapter
+
+            adapter.startListening()
+        } catch (e: Exception) {
+            Log.e(TAG, "onStart: " + e.message)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            adapter.stopListening()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }
