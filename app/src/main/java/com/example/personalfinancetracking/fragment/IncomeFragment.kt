@@ -125,6 +125,7 @@ class IncomeFragment : Fragment() {
             adapter.startListening()
 
         } catch (e: Exception) {
+            e.printStackTrace()
             Log.e(TAG, "onStart: " + e.message)
         }
     }

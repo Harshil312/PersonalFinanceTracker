@@ -40,11 +40,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Amount"
+                app:counterEnabled="true"
+                app:counterMaxLength="6"
                 app:boxStrokeColor="@color/ColorPrimary"
                 app:hintTextColor="@color/black">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_Amount"
+                    android:inputType="number"
+                    android:maxLength="6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </com.google.android.material.textfield.TextInputLayout>

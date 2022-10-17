@@ -132,11 +132,10 @@ class ExpenseFragment : Fragment() {
                 .setQuery(DBRefer, Details::class.java)
                 .build()
             adapter = MyAdapter(recyclerOptions)
-
             binding.rcViewExpenseFragment.adapter = adapter
-
             adapter.startListening()
         } catch (e: Exception) {
+            e.printStackTrace()
             Log.e(TAG, "onStart: " + e.message)
         }
     }
