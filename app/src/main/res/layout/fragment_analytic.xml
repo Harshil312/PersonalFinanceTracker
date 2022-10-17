@@ -1,16 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragment.AnalyticFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Analytics Fragment"
-        android:textSize="45sp"/>
+        android:layout_height="match_parent"
+        tools:context=".fragment.AnalyticFragment">
 
-</RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/mainRL_Analytics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardUseCompatPadding="true"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:padding="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:text="Income"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:id="@+id/tvIncome_Analytics"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:padding="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:text="Expense"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:id="@+id/tvExpense_Analytics"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:padding="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:text="Savings"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:id="@+id/tvSaving_Analytics"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Category Wise"
+                            android:textColor="@color/black"
+                            android:textSize="22sp"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</layout>
