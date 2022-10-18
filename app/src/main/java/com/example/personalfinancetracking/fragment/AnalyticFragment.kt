@@ -1,24 +1,30 @@
 package com.example.personalfinancetracking.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import com.example.personalfinancetracking.CommonUIUtility
 import com.example.personalfinancetracking.R
 import com.example.personalfinancetracking.databinding.FragmentAnalyticBinding
 import com.example.personalfinancetracking.model.Details
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import org.eazegraph.lib.models.PieModel
+
 
 class AnalyticFragment : Fragment() {
     lateinit var binding: FragmentAnalyticBinding
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var DBRefer:DatabaseReference
+    lateinit var query: Query
+    lateinit var commonUIUtility: CommonUIUtility
      var totalExpense:Int = 0
     var totalIncome:Int = 0
     var totalSaving:Int = 0
@@ -34,6 +40,7 @@ class AnalyticFragment : Fragment() {
     var totalInvestmentReturn:Int = 0
     var totalOtherIncome:Int = 0
     var totalSalary:Int = 0
+    var totalArray:Int? = null
     val TAG = "AnalyticFragment"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +49,8 @@ class AnalyticFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_analytic, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
+        commonUIUtility = CommonUIUtility(requireContext())
+        commonUIUtility.showProgress()
         //Total Expense
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
         DBRefer.addValueEventListener(object : ValueEventListener {
@@ -75,9 +84,26 @@ class AnalyticFragment : Fragment() {
             }
         })
 
+        //total Bill Payments
+        DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
+        query= DBRefer.orderByChild("itemName").equalTo("Bill Payments")
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (dataSnapshot:DataSnapshot in snapshot.children)
+                {
+                    val details = dataSnapshot.getValue(Details::class.java)
+                    totalBillPayment += Integer.parseInt(details!!.Expense)
+                    Log.d(TAG, "onDataChange: TOT BILLPAYMENT : $totalBillPayment")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError)
+            {}
+        })
+
         //total grocery
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        var query:Query = DBRefer.orderByChild("item").equalTo("Grocery")
+        query = DBRefer.orderByChild("itemName").equalTo("Grocery")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -93,14 +119,14 @@ class AnalyticFragment : Fragment() {
         })
         //total Salary
         DBRefer = FirebaseDatabase.getInstance().getReference("Income").child(firebaseAuth.currentUser!!.uid)
-        query = DBRefer.orderByChild("item").equalTo("Salary")
+        query = DBRefer.orderByChild("itemName").equalTo("Salary")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
                 {
                     val details = dataSnapshot.getValue(Details::class.java)
-                    totalGrocery += Integer.parseInt(details!!.Expense)
-                    Log.d(TAG, "onDataChange: TOT SALARY : $totalGrocery")
+                    totalSalary += Integer.parseInt(details!!.Income)
+                    Log.d(TAG, "onDataChange: TOT SALARY : $totalSalary")
                 }
             }
 
@@ -110,7 +136,7 @@ class AnalyticFragment : Fragment() {
 
         //total Shopping
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Shopping")
+        query= DBRefer.orderByChild("itemName").equalTo("Shopping")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -127,7 +153,7 @@ class AnalyticFragment : Fragment() {
 
         //total Investment
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Investment")
+        query= DBRefer.orderByChild("itemName").equalTo("Investment")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -142,26 +168,9 @@ class AnalyticFragment : Fragment() {
             {}
         })
 
-        //total Bill Payments
-        DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Bill Payments")
-        query.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (dataSnapshot:DataSnapshot in snapshot.children)
-                {
-                    val details = dataSnapshot.getValue(Details::class.java)
-                    totalBillPayment += Integer.parseInt(details!!.Expense)
-                    Log.d(TAG, "onDataChange: TOT BILLPAYMENT : $totalBillPayment")
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError)
-            {}
-        })
-
         //total Fee Payments
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Fee Payments")
+        query= DBRefer.orderByChild("itemName").equalTo("Fee Payments")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -178,7 +187,7 @@ class AnalyticFragment : Fragment() {
 
         //total Insurance
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Insurance")
+        query= DBRefer.orderByChild("itemName").equalTo("Insurance")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -195,7 +204,7 @@ class AnalyticFragment : Fragment() {
 
         //total Rent
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Rent")
+        query= DBRefer.orderByChild("itemName").equalTo("Rent")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -212,7 +221,7 @@ class AnalyticFragment : Fragment() {
 
         //total Food Expense
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Food Expense")
+        query= DBRefer.orderByChild("itemName").equalTo("Food Expense")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -229,7 +238,7 @@ class AnalyticFragment : Fragment() {
 
         //total Other Expense
         DBRefer = FirebaseDatabase.getInstance().getReference("Expense").child(firebaseAuth.currentUser!!.uid)
-        query= DBRefer.orderByChild("item").equalTo("Other")
+        query= DBRefer.orderByChild("itemName").equalTo("Other")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
@@ -246,13 +255,13 @@ class AnalyticFragment : Fragment() {
 
         //total Investment Return
         DBRefer = FirebaseDatabase.getInstance().getReference("Income").child(firebaseAuth.currentUser!!.uid)
-        query = DBRefer.orderByChild("item").equalTo("Investment Return")
+        query = DBRefer.orderByChild("itemName").equalTo("Investment Return")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
                 {
                     val details = dataSnapshot.getValue(Details::class.java)
-                    totalInvestmentReturn += Integer.parseInt(details!!.Expense)
+                    totalInvestmentReturn += Integer.parseInt(details!!.Income)
                     Log.d(TAG, "onDataChange: TOT INVESTMENTRETURN : $totalInvestmentReturn")
                 }
             }
@@ -263,13 +272,13 @@ class AnalyticFragment : Fragment() {
 
         //total Other Income
         DBRefer = FirebaseDatabase.getInstance().getReference("Income").child(firebaseAuth.currentUser!!.uid)
-        query = DBRefer.orderByChild("item").equalTo("Other")
+        query = DBRefer.orderByChild("itemName").equalTo("Other")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (dataSnapshot:DataSnapshot in snapshot.children)
                 {
                     val details = dataSnapshot.getValue(Details::class.java)
-                    totalOtherIncome += Integer.parseInt(details!!.Expense)
+                    totalOtherIncome += Integer.parseInt(details!!.Income)
                     Log.d(TAG, "onDataChange: TOT OTHERINC : $totalOtherIncome")
                 }
             }
@@ -297,12 +306,31 @@ class AnalyticFragment : Fragment() {
             totalSaving = totalIncome - totalExpense
             Log.d(TAG, "onCreateView: FINAL TOT SAV $totalSaving")
 
-            binding.tvIncomeAnalytics.setText(totalIncome.toString())
-            binding.tvExpenseAnalytics.setText(totalExpense.toString())
-            binding.tvSavingAnalytics.setText(totalSaving.toString())
+            binding.tvIncomeAnalytics.setText("₹$totalIncome")
+            binding.tvExpenseAnalytics.setText("₹$totalExpense")
+            binding.tvSavingAnalytics.setText("₹$totalSaving")
+            commonUIUtility.dismissProgress()
+            showPieChart()
         },5000)
 
         return binding.root
+    }
+
+    fun showPieChart()
+    {
+        binding.piechart.addPieSlice(PieModel("Grocery", totalGrocery.toFloat(), Color.parseColor("#FE6DA8")))
+        binding.piechart.addPieSlice(PieModel("Shopping", totalShopping.toFloat(), Color.parseColor("#56B7F1")))
+        binding.piechart.addPieSlice(PieModel("Investment", totalInvestment.toFloat(), Color.parseColor("#5645FF")))
+        binding.piechart.addPieSlice(PieModel("Bill Payments", totalBillPayment.toFloat(), Color.parseColor("#545712")))
+        binding.piechart.addPieSlice(PieModel("Fee Payments", totalFeePayment.toFloat(), Color.parseColor("#555787")))
+        binding.piechart.addPieSlice(PieModel("Insurance", totalInsurance.toFloat(), Color.parseColor("#5FD765")))
+        binding.piechart.addPieSlice(PieModel("Rent", totalRent.toFloat(), Color.parseColor("#56E6BA")))
+        binding.piechart.addPieSlice(PieModel("Food Expense", totalFoodExpense.toFloat(), Color.parseColor("#56FC5F")))
+        binding.piechart.addPieSlice(PieModel("Salary", totalOther.toFloat(), Color.parseColor("#564BD5")))
+        binding.piechart.addPieSlice(PieModel("Investment Return", totalInvestmentReturn.toFloat(), Color.parseColor("#56D9D5")))
+        binding.piechart.addPieSlice(PieModel("Other Income", totalOtherIncome.toFloat(), Color.parseColor("#564B12")))
+        binding.piechart.addPieSlice(PieModel("Other", totalOther.toFloat(), Color.parseColor("#564A96")))
+        binding.piechart.startAnimation()
     }
 
 }

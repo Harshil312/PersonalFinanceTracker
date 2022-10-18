@@ -129,9 +129,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Category Wise"
+                            android:padding="5dp"
                             android:textColor="@color/black"
                             android:textSize="22sp"
                             android:textAlignment="center" />
+
+                        <org.eazegraph.lib.charts.PieChart
+                            android:id="@+id/piechart"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:padding="8dp"
+                            app:egLegendTextSize="18sp"
+                            app:egUsePieRotation="true"
+                            app:egValueTextSize="36sp"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

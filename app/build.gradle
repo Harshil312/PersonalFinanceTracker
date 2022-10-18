@@ -60,5 +60,7 @@ dependencies {
     // FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:8.0.2'
 
-
+    //BlackFizz Chart
+    implementation 'com.github.blackfizz:eazegraph:1.2.2@aar'
+    implementation 'com.nineoldandroids:library:2.4.0'
 }
