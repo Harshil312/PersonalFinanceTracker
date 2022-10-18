@@ -59,7 +59,7 @@ class IncomeFragment : Fragment() {
         alertDialog.setCancelable(false)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item)
-        val incomeArray: Array<String> = arrayOf("Salary", "Saving", "Investment Return", "Other")
+        val incomeArray: Array<String> = arrayOf("Salary","Investment Return", "Other")
         val arrayAdapter = ArrayAdapter<String>(
             requireContext(),
             androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
