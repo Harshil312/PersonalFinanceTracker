@@ -17,6 +17,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar!!.hide()
         binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
 
         firebaseAuth = FirebaseAuth.getInstance()
@@ -47,5 +48,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+    }
+    override fun onStart() {
+        super.onStart()
+        if(firebaseAuth.currentUser != null)
+        {
+            startActivity(Intent(this,HomeActivity::class.java))
+            finish()
+        }
     }
 }

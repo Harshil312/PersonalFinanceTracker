@@ -7,27 +7,29 @@
 
     </data>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".fragment.AnalyticFragment">
+
 
         <RelativeLayout
             android:id="@+id/mainRL_Analytics"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:context=".fragment.AnalyticFragment">
 
             <LinearLayout
+                android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:gravity="center">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardUseCompatPadding="true"
                     app:cardCornerRadius="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     app:cardElevation="5dp">
 
                     <LinearLayout
@@ -118,6 +120,8 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     app:cardUseCompatPadding="true">
 
                     <LinearLayout
@@ -146,5 +150,4 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </RelativeLayout>
-    </ScrollView>
 </layout>

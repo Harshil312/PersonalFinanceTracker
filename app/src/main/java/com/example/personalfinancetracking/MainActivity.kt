@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        supportActionBar!!.hide()
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             startActivity(Intent(this,LoginActivity::class.java))
             finish()
