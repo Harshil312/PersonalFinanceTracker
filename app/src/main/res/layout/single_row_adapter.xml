@@ -48,6 +48,14 @@
                 android:textColor="@color/black"
                 android:padding="3dp"
                 android:text="Note"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_Id_row"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:padding="3dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

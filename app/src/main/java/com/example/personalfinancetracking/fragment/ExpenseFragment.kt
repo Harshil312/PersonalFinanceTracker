@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.personalfinancetracking.R
 import com.example.personalfinancetracking.adapter.MyAdapter
+import com.example.personalfinancetracking.database.DatabaseManager
+import com.example.personalfinancetracking.database.Query
 import com.example.personalfinancetracking.databinding.FragmentExpenseBinding
 import com.example.personalfinancetracking.databinding.FragmentIncomeBinding
 import com.example.personalfinancetracking.model.Details
@@ -30,6 +32,7 @@ class ExpenseFragment : Fragment() {
     lateinit var binding: FragmentExpenseBinding
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var DBRefer: DatabaseReference
+    lateinit var databaseManager: DatabaseManager
     lateinit var adapter: MyAdapter
     var pushKey:String = ""
     val TAG = "ExpenseFragment"
@@ -42,10 +45,12 @@ class ExpenseFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_expense, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
-
+        databaseManager = DatabaseManager(requireContext())
+        databaseManager.initializeInstance(requireContext())
         binding.rcViewExpenseFragment.layoutManager = LinearLayoutManager(requireContext())
         DBRefer = FirebaseDatabase.getInstance().getReference().child("Expense")
             .child(firebaseAuth.currentUser!!.uid);
+        bindRecyclerView()
         binding.fabExpenseFragment.setOnClickListener {
             callCustomDialog()
         }
@@ -63,21 +68,11 @@ class ExpenseFragment : Fragment() {
         alertDialog.setCancelable(false)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item)
-        val ExpenseArray: Array<String> = arrayOf(
-            "Grocery",
-            "Shopping",
-            "Investment",
-            "Bill Payments",
-            "Fee Payments",
-            "Insurance",
-            "Rent",
-            "Food Expense",
-            "Other"
-        )
+        val expenseArr = resources.getStringArray(R.array.expenseItem)
         val arrayAdapter = ArrayAdapter<String>(
             requireContext(),
             androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-            ExpenseArray
+            expenseArr
         )
         actItem.setAdapter(arrayAdapter)
         val edtExpense = view.findViewById<EditText>(R.id.edt_Amount)
@@ -103,14 +98,25 @@ class ExpenseFragment : Fragment() {
                     Log.d(TAG, "callCustomDialog: MONTH : " + month)
                     Log.d(TAG, "callCustomDialog: DATE : " + date)
 
-                    val details = Details(item, "", Expense, note, date, month)
-                    DBRefer.child(id.toString()).setValue(details).addOnCompleteListener {
-                        if (!it.isSuccessful) {
-
-                            Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
-                                .show()
-
-                        }
+                    val details = Details("",item, 0, Expense.toInt(), note, date, month)
+//                    DBRefer.child(id.toString()).setValue(details).addOnCompleteListener {
+//                        if (!it.isSuccessful) {
+//
+//                            Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
+//                                .show()
+//
+//                        }
+//                    }
+                    val count:Long = databaseManager.insertExpense(details)
+                    if (count>0)
+                    {
+                        Toast.makeText(requireContext(), "Data Added Successfully!", Toast.LENGTH_SHORT)
+                            .show()
+                        bindRecyclerView()
+                    }else
+                    {
+                        Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                     alertDialog.dismiss()
                 } catch (e: Exception) {
@@ -128,70 +134,7 @@ class ExpenseFragment : Fragment() {
 
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mView: View? = null
-
-
-        init {
-            mView = itemView
-        }
-
-        fun setDetailType(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Item_row)
-            item.text = itemName
-
-        }
-
-        fun setDetailAmt(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Amt_row)
-            item.text = itemName
-
-        }
-
-        fun setDetailDate(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Date_row)
-            item.text = itemName
-        }
-
-        fun setDetailNote(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Note_row)
-            item.text = itemName
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        try {
-            val recyclerOptions = FirebaseRecyclerOptions.Builder<Details>()
-                .setQuery(DBRefer, Details::class.java)
-                .build()
-            val adapter : FirebaseRecyclerAdapter<Details, MyViewHolder> = object : FirebaseRecyclerAdapter<Details, MyViewHolder>(recyclerOptions) {
-                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-                    val view = LayoutInflater.from(parent.context).inflate(R.layout.single_row_adapter,parent,false)
-                    return MyViewHolder(view)
-                }
-
-                override fun onBindViewHolder(holder: MyViewHolder, position: Int, model: Details) {
-                    holder.setDetailAmt("Amount : "+model.Expense)
-                    holder.setDetailDate("Date : "+model.Date)
-                    holder.setDetailType("Name : "+model.ItemName)
-                    holder.setDetailNote("Note : "+model.Note)
-                    holder.mView!!.setOnClickListener {
-                        pushKey = getRef(position).key.toString()
-                        callUpdateDialog(model.Expense,model.Note,model.ItemName,model.Date)
-                    }
-                }
-            }
-            binding.rcViewExpenseFragment.adapter = adapter
-            adapter.startListening()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e(TAG, "onStart: " + e.message)
-        }
-    }
-
-    private fun callUpdateDialog(amount:String,note:String,itemType:String,date:String) {
+    fun callUpdateDialog(id:String,amount:String,note:String,itemType:String,date:String) {
         val dialog = AlertDialog.Builder(requireContext())
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.update_custom_dialog, null)
@@ -202,18 +145,8 @@ class ExpenseFragment : Fragment() {
         alertDialog.setCancelable(true)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item_update)
-        val ExpenseArray: Array<String> = arrayOf(
-            "Grocery",
-            "Shopping",
-            "Investment",
-            "Bill Payments",
-            "Fee Payments",
-            "Insurance",
-            "Rent",
-            "Food Expense",
-            "Other"
-        )
-        val arrayAdapter = ArrayAdapter<String>(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,ExpenseArray)
+        val expenseArr = resources.getStringArray(R.array.expenseItem)
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,expenseArr)
         actItem.setAdapter(arrayAdapter)
         val edtAmount = view.findViewById<EditText>(R.id.edt_Amount_update)
         val edtNote = view.findViewById<EditText>(R.id.edt_Note_update)
@@ -241,7 +174,7 @@ class ExpenseFragment : Fragment() {
                     Log.d(TAG, "callCustomDialog: MONTH : " + month)
                     Log.d(TAG, "callCustomDialog: DATE : " + date)
 
-                    val details = Details(item, "", amount, note, date, month)
+                    val details = Details(id,item, 0, amount.toInt(), note, date, month)
                     DBRefer.child(pushKey).setValue(details).addOnCompleteListener {
                         if (!it.isSuccessful) {
 //                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
@@ -269,6 +202,24 @@ class ExpenseFragment : Fragment() {
         }
 
         alertDialog.show()
+    }
+
+    fun bindRecyclerView() {
+        var dataList: ArrayList<Details> = ArrayList()
+        val cursor = databaseManager.ExecuteRawSql(Query().getExpenseData())
+        if (cursor != null && cursor.count > 0) {
+            while (cursor.moveToNext()) {
+                val details = Details()
+                details.Id = cursor.getInt(cursor.getColumnIndexOrThrow("ExpenseId")).toString()
+                details.Expense = cursor.getInt(cursor.getColumnIndexOrThrow("Amount"))
+                details.Date = cursor.getString(cursor.getColumnIndexOrThrow("Date"))
+                details.Note = cursor.getString(cursor.getColumnIndexOrThrow("Note"))
+                details.ItemName = cursor.getString(cursor.getColumnIndexOrThrow("ExpenseType"))
+                dataList.add(details)
+            }
+        }
+        adapter = MyAdapter(requireContext(),ExpenseFragment(),dataList)
+        binding.rcViewExpenseFragment.adapter = adapter
     }
 
 }

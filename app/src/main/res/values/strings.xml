@@ -9,4 +9,16 @@
         <item>Investment Return</item>
         <item>Other</item>
     </array>
+    <array name="expenseItem">
+        <item>Grocery</item>
+        <item>Shopping</item>
+        <item>Investment</item>
+        <item>Bill Payments</item>
+        <item>Fee Payments</item>
+        <item>Insurance</item>
+        <item>Rent</item>
+        <item>Food Expense</item>
+        <item>Other</item>
+    </array>
+
 </resources>

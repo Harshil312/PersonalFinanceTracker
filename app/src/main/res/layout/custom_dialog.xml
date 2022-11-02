@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Note"
+                android:hint="Note (Optional)"
                 app:boxStrokeColor="@color/ColorPrimary"
                 app:hintTextColor="@color/black">
 

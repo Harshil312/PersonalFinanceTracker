@@ -11,6 +11,7 @@
         android:theme="@style/Theme.PersonalFinanceTracking">
         <activity
             android:name=".HomeActivity"
+            android:launchMode="singleTop"
             android:exported="true">
 
         </activity>
@@ -31,6 +32,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

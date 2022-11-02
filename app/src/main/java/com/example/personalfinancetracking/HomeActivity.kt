@@ -26,12 +26,7 @@ class HomeActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
         binding.bottomNavBar.setupWithNavController(navController)
-//        binding.btnLogout.setOnClickListener {
-//
-//            firebaseAuth.signOut()
-//            startActivity(Intent(this,LoginActivity::class.java))
-//            finish()
-//        }
+
 
     }
 
@@ -53,6 +48,10 @@ class HomeActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
+    }
+
+    override fun onBackPressed() {
+        finishAffinity()
     }
 
 

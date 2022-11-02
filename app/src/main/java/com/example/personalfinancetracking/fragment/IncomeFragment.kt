@@ -1,5 +1,6 @@
 package com.example.personalfinancetracking.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.personalfinancetracking.R
 import com.example.personalfinancetracking.adapter.MyAdapter
+import com.example.personalfinancetracking.database.DatabaseManager
+import com.example.personalfinancetracking.database.Query
 import com.example.personalfinancetracking.databinding.FragmentIncomeBinding
 import com.example.personalfinancetracking.model.Details
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -24,12 +27,16 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class IncomeFragment : Fragment() {
     lateinit var binding: FragmentIncomeBinding
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var DBRefer: DatabaseReference
+    lateinit var databaseManager: DatabaseManager
+    lateinit var adapter: MyAdapter
+    lateinit var activity:Activity
     var pushKey: String = ""
     val TAG = "IncomeFragment"
 
@@ -40,10 +47,13 @@ class IncomeFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_income, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
-
+        databaseManager = DatabaseManager(requireContext())
+        databaseManager.initializeInstance(requireContext())
+        activity = requireActivity()
         binding.rcViewIncomeFragment.layoutManager = LinearLayoutManager(requireContext())
         DBRefer = FirebaseDatabase.getInstance().getReference().child("Income")
             .child(firebaseAuth.currentUser!!.uid)
+        bindRecyclerView()
         binding.fabIncomeFragment.setOnClickListener {
             callCustomDialog()
         }
@@ -61,11 +71,11 @@ class IncomeFragment : Fragment() {
         alertDialog.setCancelable(false)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item)
-        val incomeArray: Array<String> = arrayOf("Salary", "Investment Return", "Other")
+        val incomeArr = resources.getStringArray(R.array.incomeItem)
         val arrayAdapter = ArrayAdapter<String>(
             requireContext(),
             androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-            incomeArray
+            incomeArr
         )
         actItem.setAdapter(arrayAdapter)
         val edtAmount = view.findViewById<EditText>(R.id.edt_Amount)
@@ -91,15 +101,22 @@ class IncomeFragment : Fragment() {
                     Log.d(TAG, "callCustomDialog: MONTH : " + month)
                     Log.d(TAG, "callCustomDialog: DATE : " + date)
 
-                    val details = Details(item, amount, "", note, date, month)
-                    DBRefer.child(id.toString()).setValue(details).addOnCompleteListener {
-                        if (!it.isSuccessful) {
-//                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
-//                                .show()
-                            Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                    val details = Details("",item, amount.toInt(), 0, note, date, month)
+
+                    val count: Long = databaseManager.insertIncome(details)
+                    if (count > 0) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Data Added Successfully!",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        bindRecyclerView()
+                    } else {
+                        Toast.makeText(requireContext(), "Data NOT Added!", Toast.LENGTH_SHORT)
+                            .show()
                     }
+
                     alertDialog.dismiss()
                 } catch (e: Exception) {
                     Log.e(TAG, "callCustomDialog: " + e.message)
@@ -114,81 +131,9 @@ class IncomeFragment : Fragment() {
         alertDialog.show()
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mView: View? = null
-
-
-        init {
-            mView = itemView
-        }
-
-        fun setDetailType(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Item_row)
-            item.text = itemName
-
-        }
-
-        fun setDetailAmt(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Amt_row)
-            item.text = itemName
-
-        }
-
-        fun setDetailDate(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Date_row)
-            item.text = itemName
-        }
-
-        fun setDetailNote(itemName: String) {
-            val item = mView!!.findViewById<TextView>(R.id.tv_Note_row)
-            item.text = itemName
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        try {
-            val recyclerOptions = FirebaseRecyclerOptions.Builder<Details>()
-                .setQuery(DBRefer, Details::class.java)
-                .build()
-            val adapter: FirebaseRecyclerAdapter<Details, MyViewHolder> =
-                object : FirebaseRecyclerAdapter<Details, MyViewHolder>(recyclerOptions) {
-                    override fun onCreateViewHolder(
-                        parent: ViewGroup,
-                        viewType: Int
-                    ): MyViewHolder {
-                        val view = LayoutInflater.from(parent.context)
-                            .inflate(R.layout.single_row_adapter, parent, false)
-                        return MyViewHolder(view)
-                    }
-
-                    override fun onBindViewHolder(
-                        holder: MyViewHolder,
-                        position: Int,
-                        model: Details
-                    ) {
-                        holder.setDetailAmt("Amount : " + model.Income)
-                        holder.setDetailDate("Date : " + model.Date)
-                        holder.setDetailType("Name : " + model.ItemName)
-                        holder.setDetailNote("Note : " + model.Note)
-                        holder.mView!!.setOnClickListener {
-                            pushKey = getRef(position).key.toString()
-                            callUpdateDialog(model.Income, model.Note, model.ItemName, model.Date)
-                        }
-                    }
-                }
-            binding.rcViewIncomeFragment.adapter = adapter
-            adapter.startListening()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e(TAG, "onStart: " + e.message)
-        }
-    }
-
-    private fun callUpdateDialog(amount: String, note: String, itemType: String, date: String) {
-        val dialog = AlertDialog.Builder(requireContext())
-        val inflater = LayoutInflater.from(requireContext())
+    fun callUpdateDialog(id:String,amount: String, note: String, itemType: String, date: String) {
+        val dialog = AlertDialog.Builder(activity.applicationContext)
+        val inflater = LayoutInflater.from(activity.applicationContext)
         val view = inflater.inflate(R.layout.update_custom_dialog, null)
         dialog.setView(view)
 
@@ -230,18 +175,18 @@ class IncomeFragment : Fragment() {
                     Log.d(TAG, "callCustomDialog: MONTH : " + month)
                     Log.d(TAG, "callCustomDialog: DATE : " + date)
 
-                    val details = Details(item, amount, "", note, date, month)
-                    DBRefer.child(pushKey).setValue(details).addOnCompleteListener {
-                        if (!it.isSuccessful) {
-//                            Toast.makeText(requireContext(), "Data Added!", Toast.LENGTH_SHORT)
-//                                .show()
-                            Toast.makeText(
-                                requireContext(),
-                                "Data NOT Updated!",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        }
+                    val details = Details(id,item, amount.toInt(), 0, note, date, month)
+
+                    val count = databaseManager.updateInsert(details)
+                    if (count>0)
+                    {
+                        Toast.makeText(requireContext(), "Data Updated!", Toast.LENGTH_SHORT)
+                            .show()
+                    }else
+                    {
+                        Toast.makeText(requireContext(), "Data NOT Updated!", Toast.LENGTH_SHORT)
+                            .show()
+                        bindRecyclerView()
                     }
                     alertDialog.dismiss()
                 } catch (e: Exception) {
@@ -261,5 +206,23 @@ class IncomeFragment : Fragment() {
         }
 
         alertDialog.show()
+    }
+
+    fun bindRecyclerView() {
+        var dataList: ArrayList<Details> = ArrayList()
+        val cursor = databaseManager.ExecuteRawSql(Query().getIncomeData())
+        if (cursor != null && cursor.count > 0) {
+            while (cursor.moveToNext()) {
+                val details = Details()
+                details.Id = cursor.getInt(cursor.getColumnIndexOrThrow("IncomeId")).toString()
+                details.Income = cursor.getInt(cursor.getColumnIndexOrThrow("Amount"))
+                details.Date = cursor.getString(cursor.getColumnIndexOrThrow("Date"))
+                details.Note = cursor.getString(cursor.getColumnIndexOrThrow("Note"))
+                details.ItemName = cursor.getString(cursor.getColumnIndexOrThrow("IncomeType"))
+                dataList.add(details)
+            }
+        }
+        adapter = MyAdapter(requireContext(),IncomeFragment(),dataList)
+        binding.rcViewIncomeFragment.adapter = adapter
     }
 }
