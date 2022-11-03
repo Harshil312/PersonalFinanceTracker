@@ -114,4 +114,82 @@ class Query {
         Log.d(TAG, "getTotalOtherExpense : $qry")
         return qry
     }
+
+    fun getTotalSavingMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Income WHERE IncomeType = 'Saving' AND Month='$month'"
+        Log.d(TAG, "getTotalSavingMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalSalaryMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Income WHERE IncomeType = 'Salary' AND Month='$month'"
+        Log.d(TAG, "getTotalSalaryMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalInvestmentReturnMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Income WHERE IncomeType = 'Investment Return' AND Month='$month'"
+        Log.d(TAG, "getTotalInvestmentReturnMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalOtherIncomeMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Income WHERE IncomeType = 'Other' AND Month='$month'"
+        Log.d(TAG, "getTotalOtherIncomeMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalGroceryMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Grocery' AND Month='$month'"
+        Log.d(TAG, "getTotalGroceryMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalShoppingMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Shopping' AND Month='$month'"
+        Log.d(TAG, "getTotalShoppingMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalInvestmentMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Investment' AND Month='$month'"
+        Log.d(TAG, "getTotalInvestmentMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalBillPaymentsMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Bill Payments' AND Month='$month'"
+        Log.d(TAG, "getTotalBillPaymentsMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalFeePaymentsMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Fee Payments' AND Month='$month'"
+        Log.d(TAG, "getTotalFeePaymentsMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalInsuranceMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Insurance' AND Month='$month'"
+        Log.d(TAG, "getTotalInsuranceMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalRentMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Rent' AND Month='$month'"
+        Log.d(TAG, "getTotalRentMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalFoodExpenseMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Food Expense' AND Month='$month'"
+        Log.d(TAG, "getTotalFoodExpenseMonthWise : $qry")
+        return qry
+    }
+
+    fun getTotalOtherMonthWise(month:String): String {
+        qry = "SELECT SUM(Amount) FROM Expense WHERE ExpenseType = 'Other' AND Month='$month'"
+        Log.d(TAG, "getTotalOtherMonthWise : $qry")
+        return qry
+    }
 }

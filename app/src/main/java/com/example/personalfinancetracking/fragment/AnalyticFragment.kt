@@ -6,6 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.personalfinancetracking.CommonUIUtility
@@ -37,6 +40,7 @@ class AnalyticFragment : Fragment() {
         binding.tvIncomeAnalytics.text = getTotalIncome().toString()
         binding.tvSavingAnalytics.text = (getTotalIncome() - getTotalExpense()).toString()
         showPieChart()
+        showPieChartMonthWise()
         return binding.root
     }
 
@@ -51,7 +55,6 @@ class AnalyticFragment : Fragment() {
         }
         return count
     }
-
     fun getTotalExpense():Int{
         var count = 0
         try {
@@ -63,7 +66,6 @@ class AnalyticFragment : Fragment() {
         }
         return count
     }
-
     fun getTotalSaving():Int{
         var count = 0
         try {
@@ -75,7 +77,6 @@ class AnalyticFragment : Fragment() {
         }
         return count
     }
-
     fun getTotalSalary():Int{
         var count = 0
         try {
@@ -87,7 +88,6 @@ class AnalyticFragment : Fragment() {
         }
         return count
     }
-
     fun getTotalInvestmentReturn():Int{
         var count = 0
         try {
@@ -209,6 +209,7 @@ class AnalyticFragment : Fragment() {
         }
         return count
     }
+
     fun showPieChart()
     {
         binding.piechart.addPieSlice(PieModel("Grocery", getTotalGrocery().toFloat(), Color.parseColor("#FE6DA8")))
@@ -225,4 +226,33 @@ class AnalyticFragment : Fragment() {
         binding.piechart.addPieSlice(PieModel("Other", getTotalOtherExpense().toFloat(), Color.parseColor("#564A96")))
         binding.piechart.startAnimation()
    }
+
+    fun showPieChartMonthWise(){
+        try{
+            val monthArr = resources.getStringArray(R.array.month)
+            val adapter = ArrayAdapter<String>(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,monthArr)
+            binding.spnMonth.adapter = adapter
+//            binding.spnMonth.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+//                    val position = p2
+//                    Toast.makeText(requireContext(),monthArr[position],Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onNothingSelected(p0: AdapterView<*>?) {
+//
+//                }
+//            }
+
+            binding.spnMonth.onItemClickListener = object : AdapterView.OnItemClickListener {
+                override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    val position = p2
+                    Toast.makeText(requireContext(),monthArr[position],Toast.LENGTH_SHORT).show()
+                }
+            }
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+            Log.e(TAG, "showPieChartMonthWise: "+e.message)
+        }
+    }
 }
