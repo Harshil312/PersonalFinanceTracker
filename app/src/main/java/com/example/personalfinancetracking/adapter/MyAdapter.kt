@@ -103,7 +103,7 @@ class MyAdapter(mContext: Context, mFragment: Fragment, detailsList: ArrayList<D
                     dataList[position].ItemName,
                     dataList[position].Date
                 )
-            } else  {
+            } else {
                 callUpdateDialog(
                     dataList[position].Id,
                     dataList[position].Expense.toString(),
@@ -202,7 +202,15 @@ class MyAdapter(mContext: Context, mFragment: Fragment, detailsList: ArrayList<D
         }
 
         btnCancel.setOnClickListener {
-
+            var count = databaseManager.deleteIncome(id)
+            if (count>0){
+                Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                    .show()
+            }else
+            {
+                Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                    .show()
+            }
             alertDialog.dismiss()
         }
 

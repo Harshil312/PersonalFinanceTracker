@@ -206,6 +206,33 @@ class DatabaseManager(context: Context) {
         return count
     }
 
+    fun deleteExpense(Id:String):Int
+    {
+        mDatabase = openDatabase()
+        var count = 0
+        try {
+            count = mDatabase!!.delete(Constants.TBL_EXPENSE,"ExpenseId = ?", arrayOf(Id))
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+            Log.e(TAG, "deleteExpense: "+e.message)
+        }
+        return count
+    }
+
+    fun deleteIncome(Id:String):Int
+    {
+        mDatabase = openDatabase()
+        var count = 0
+        try {
+            count = mDatabase!!.delete(Constants.TBL_INCOME,"IncomeId = ?", arrayOf(Id))
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+            Log.e(TAG, "deleteIncome: "+e.message)
+        }
+        return count
+    }
     fun deleteData(tableName: String){
         Log.d("deleteData: ",tableName)
         mDatabase = openDatabase()
