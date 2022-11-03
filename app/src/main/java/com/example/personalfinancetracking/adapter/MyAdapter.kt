@@ -21,14 +21,15 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Details>) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>(){
-    lateinit var fragment: Fragment
-    lateinit var context: Context
-    lateinit var dataList:ArrayList<Details>
-    lateinit var model:Details
+class MyAdapter(mContext: Context, mFragment: Fragment, detailsList: ArrayList<Details>) :
+    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+    var fragment: Fragment
+    var context: Context
+    var dataList: ArrayList<Details>
+    lateinit var model: Details
     val TAG = "MyAdapter"
-    lateinit var databaseManager:DatabaseManager
+    var databaseManager: DatabaseManager
+
     init {
         fragment = mFragment
         context = mContext
@@ -39,7 +40,7 @@ class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Detai
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var mView: View? = null
-        lateinit var cardView:CardView
+        lateinit var cardView: CardView
 
         init {
             mView = itemView
@@ -76,39 +77,49 @@ class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Detai
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.single_row_adapter,null,false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.single_row_adapter, null, false)
         return MyViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         model = dataList[position]
-        if (fragment is IncomeFragment)
-        {
-            holder.setDetailAmt("Amount : "+model.Income.toString())
-        }else
-        {
-            holder.setDetailAmt("Amount : "+model.Expense.toString())
+        if (fragment is IncomeFragment) {
+            holder.setDetailAmt("Amount : " + dataList[position].Income)
+        } else {
+            holder.setDetailAmt("Amount : " + dataList[position].Expense)
         }
-        holder.setDetailDate("Date : "+model.Date)
-        holder.setDetailNote("Note : "+model.Note)
-        holder.setDetailType("Income Type : "+model.ItemName)
-        holder.setDetailId(model.Id)
+        holder.setDetailDate("Date : " + dataList[position].Date)
+        holder.setDetailNote("Note : " + dataList[position].Note)
+        holder.setDetailType("Income Type : " + dataList[position].ItemName)
+        holder.setDetailId(dataList[position].Id)
 
         holder.cardView.setOnClickListener {
-           if (fragment is IncomeFragment)
-           {
-               callUpdateDialog(model.Id,model.Income.toString(),model.Note,model.ItemName,model.Date)
-           }else if (fragment is ExpenseFragment)
-           {
-               callUpdateDialog(model.Id,model.Expense.toString(),model.Note,model.ItemName,model.Date)
-           }
+            if (fragment is IncomeFragment) {
+                callUpdateDialog(
+                    dataList[position].Id,
+                    dataList[position].Income.toString(),
+                    dataList[position].Note,
+                    dataList[position].ItemName,
+                    dataList[position].Date
+                )
+            } else  {
+                callUpdateDialog(
+                    dataList[position].Id,
+                    dataList[position].Expense.toString(),
+                    dataList[position].Note,
+                    dataList[position].ItemName,
+                    dataList[position].Date
+                )
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return dataList.size
     }
-    fun callUpdateDialog(id:String,amount: String, note: String, itemType: String, date: String) {
+
+    fun callUpdateDialog(id: String, amount: String, note: String, itemType: String, date: String) {
         val dialog = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.update_custom_dialog, null)
@@ -119,8 +130,7 @@ class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Detai
         alertDialog.setCancelable(true)
 
         val actItem = view.findViewById<AutoCompleteTextView>(R.id.atc_item_update)
-        if (fragment is IncomeFragment)
-        {
+        if (fragment is IncomeFragment) {
             val arr = context.resources.getStringArray(R.array.incomeItem)
             val arrayAdapter = ArrayAdapter<String>(
                 context,
@@ -128,8 +138,7 @@ class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Detai
                 arr
             )
             actItem.setAdapter(arrayAdapter)
-        }else
-        {
+        } else {
             val arr = context.resources.getStringArray(R.array.expenseItem)
             val arrayAdapter = ArrayAdapter<String>(
                 context,
@@ -161,31 +170,25 @@ class MyAdapter(mContext: Context,mFragment:Fragment,detailsList:ArrayList<Detai
                     val month = date.substring(3, 5)
                     Log.d(TAG, "callCustomDialog: MONTH : " + month)
                     Log.d(TAG, "callCustomDialog: DATE : " + date)
-                    if (fragment is IncomeFragment)
-                    {
-                        val details = Details(id,item, amount.toInt(), 0, note, date, month)
+                    if (fragment is IncomeFragment) {
+                        val details = Details(id, item, amount.toInt(), 0, note, date, month)
 
-                        var count=databaseManager.updateInsert(details)
-                        if (count>0)
-                        {
+                        var count = databaseManager.updateInsert(details)
+                        if (count > 0) {
                             Toast.makeText(context, "Data Updated!", Toast.LENGTH_SHORT)
                                 .show()
-                        }else
-                        {
+                        } else {
                             Toast.makeText(context, "Data NOT Updated!", Toast.LENGTH_SHORT)
                                 .show()
                         }
-                    }else
-                    {
-                        val details = Details(id,item, 0, amount.toInt(), note, date, month)
+                    } else {
+                        val details = Details(id, item, 0, amount.toInt(), note, date, month)
 
                         var count = databaseManager.updateExpense(details)
-                        if (count>0)
-                        {
+                        if (count > 0) {
                             Toast.makeText(context, "Data Updated!", Toast.LENGTH_SHORT)
                                 .show()
-                        }else
-                        {
+                        } else {
                             Toast.makeText(context, "Data NOT Updated!", Toast.LENGTH_SHORT)
                                 .show()
                         }

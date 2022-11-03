@@ -168,9 +168,9 @@ class DatabaseManager(context: Context) {
         return count
     }
 
-    fun updateInsert(details: Details) : Long{
+    fun updateInsert(details: Details) : Int{
         mDatabase = openDatabase()
-        val count = 0L
+        var count = 0
         try {
             val list = ContentValues()
             list.put("Amount",details.Income)
@@ -178,7 +178,7 @@ class DatabaseManager(context: Context) {
             list.put("Date",details.Date)
             list.put("Month",details.Month)
             list.put("Note",details.Note)
-            mDatabase!!.update(Constants.TBL_INCOME,list,"IncomeId = ?", arrayOf(details.Id))
+           count = mDatabase!!.update(Constants.TBL_INCOME,list,"IncomeId = ?", arrayOf(details.Id))
         }catch (e:Exception)
         {
             Log.e(TAG, "updateInsert: "+e.message)
@@ -187,9 +187,9 @@ class DatabaseManager(context: Context) {
         return count
     }
 
-    fun updateExpense(details: Details) : Long{
+    fun updateExpense(details: Details) : Int{
         mDatabase = openDatabase()
-        val count = 0L
+        var count = 0
         try {
             val list = ContentValues()
             list.put("Amount",details.Expense)
@@ -197,7 +197,7 @@ class DatabaseManager(context: Context) {
             list.put("Date",details.Date)
             list.put("Month",details.Month)
             list.put("Note",details.Note)
-            mDatabase!!.update(Constants.TBL_INCOME,list,"ExpenseId = ?", arrayOf(details.Id))
+            count = mDatabase!!.update(Constants.TBL_EXPENSE,list,"ExpenseId = ?", arrayOf(details.Id))
         }catch (e:Exception)
         {
             Log.e(TAG, "updateExpense: "+e.message)

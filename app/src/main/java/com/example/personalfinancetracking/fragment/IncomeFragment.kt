@@ -132,8 +132,8 @@ class IncomeFragment : Fragment() {
     }
 
     fun callUpdateDialog(id:String,amount: String, note: String, itemType: String, date: String) {
-        val dialog = AlertDialog.Builder(activity.applicationContext)
-        val inflater = LayoutInflater.from(activity.applicationContext)
+        val dialog = AlertDialog.Builder(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.update_custom_dialog, null)
         dialog.setView(view)
 
