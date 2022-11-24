@@ -13,45 +13,6 @@ import android.widget.Toast
 
 class CommonUIUtility(var context: Context) {
     val dialog= Dialog(context)
-    public final fun showAlertWithOkButton(whatMessage: String) {
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
-        alertDialog.setMessage(whatMessage)
-        alertDialog.setCancelable(false)
-        alertDialog.setPositiveButton("OK", object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface?, p1: Int) {
-                dialog?.dismiss()
-            }
-        })
-        alertDialog.show()
-    }
-
-    fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-
-    interface Callback {
-        fun onSuccess(t: Int)
-    }
-
-//    fun showAlert(title : String,msg : String,callback : Callback){
-//        AlertDialog.Builder(context).setTitle(title).setMessage(msg).setPositiveButton("OK", object : DialogInterface.OnClickListener{
-//            override fun onClick(p0: DialogInterface?, p1: Int) {
-//                callback.onSucess(0)
-//            }
-//        }).show()
-//    }
-
-    fun showAlert(
-        title: String?,
-        msg: String?,
-        callback: Callback
-    ) {
-        AlertDialog.Builder(context).setTitle(title).setMessage(msg).setPositiveButton(
-            "OK"
-        ) { dialog, which -> callback.onSuccess(0) }.setNegativeButton(
-            "CANCEL"
-        ) { dialog, which -> callback.onSuccess(-1) }.show()
-    }
 
     public fun showProgress() {
         val view: View =
@@ -71,10 +32,4 @@ class CommonUIUtility(var context: Context) {
             dialog.dismiss()
         }
     }
-    public fun hideKeyboard(view: View)
-    {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
 }

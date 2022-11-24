@@ -2,6 +2,8 @@ package com.example.personalfinancetracking.fragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,8 +44,14 @@ class AnalyticFragment : Fragment() {
         binding.tvExpenseAnalytics.text = getTotalExpense().toString()
         binding.tvIncomeAnalytics.text = getTotalIncome().toString()
         binding.tvSavingAnalytics.text = (getTotalIncome() - getTotalExpense()).toString()
-        showPieChart()
-        bindMonthSpinner()
+
+        commonUIUtility.showProgress()
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            commonUIUtility.dismissProgress()
+            showPieChart()
+            bindMonthSpinner()
+        },3000)
+
         return binding.root
     }
 
