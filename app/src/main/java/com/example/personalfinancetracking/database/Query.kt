@@ -6,13 +6,6 @@ class Query {
     lateinit var qry: String
     val TAG = "Query"
 
-    //    fun getLabs():String
-//    {
-//        qry = "SELECT LabName FROM LabMaster"
-//        Log.d(TAG, "getLabs : $qry")
-//        return qry
-//    }
-//
     fun getIncomeData(): String {
         qry = "SELECT IncomeId,Amount,IncomeType,Date,Month,Note FROM Income"
         Log.d(TAG, "getIncomeData : $qry")
