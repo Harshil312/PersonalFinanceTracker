@@ -202,15 +202,29 @@ class MyAdapter(mContext: Context, mFragment: Fragment, detailsList: ArrayList<D
         }
 
         btnCancel.setOnClickListener {
-            var count = databaseManager.deleteIncome(id)
-            if (count>0){
-                Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
-                    .show()
-            }else
+            if(fragment is IncomeFragment)
             {
-                Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
-                    .show()
+                var count = databaseManager.deleteIncome(id)
+                if (count>0){
+                    Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                        .show()
+                }else
+                {
+                    Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }else{
+                var count = databaseManager.deleteExpense(id)
+                if (count>0){
+                    Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                        .show()
+                }else
+                {
+                    Toast.makeText(context, "Data Deleted!", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
+
             alertDialog.dismiss()
         }
 
